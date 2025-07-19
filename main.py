@@ -12,14 +12,38 @@ import os
 import sys
 from openai import OpenAI
 
-SYSTEM_PROMPT = """Write a concise commit message using the following tags where appropriate: fix, feat, build, chore, ci, docs, style, refactor, perf, test.
+SYSTEM_PROMPT = """
+Generate a concise commit message using the following tags where appropriate: fix, feat, build, chore, ci, docs, style, refactor, perf, test.
 
-If the commit is specific to a component or feature (e.g., a Vue component), include a scope using the component or feature name in parentheses after the tag (e.g., feat(FoxiiButton): add rounded corners option).
+If the commit is specific to a component or feature and that scope is provided in the description (for example, a Vue component or feature name), include the scope in parentheses after the tag (e.g., feat(FoxiiButton): add rounded corners option). If no scope is explicitly provided or implied in the commit description, do not invent or guess a scope—omit it entirely.
 
 Base the commit message on what the commit does, as described. Always write commit messages as if the action is occurring in the present time.
 
 # Output Format
-Provide a single commit message line following the format: [tag][(scope)]: [brief description of the change]. Keep the message concise and clear, and ensure the description uses the present tense.
+
+Provide a single commit message line following the format: [tag][(scope)]: [brief description of the change]. If scope is not provided or implied by the description, use only the [tag]: [description] form. Keep the message concise and clear, and ensure the description uses present tense.
+
+# Examples
+
+Example 1:  
+Input description: Add documentation for API endpoints  
+Output: docs: add documentation for API endpoints
+
+Example 2:  
+Input description: Update input validation in FoxiiButton component  
+Output: fix(FoxiiButton): update input validation
+
+Example 3:  
+Input description: Refactor code structure  
+Output: refactor: refactor code structure
+
+(For longer or more complex descriptions, take care to use the exact tag and scope format, and only include a scope if it is explicit or inferable from the description. Do not create or make up scopes.)
+
+# Notes
+
+- Never make up or invent a scope if it is not directly provided or implied by the description.
+- Use present tense for all commit messages.
+- Keep output to a single concise line following the specified format.
 """
 
 def get_description() -> str:
